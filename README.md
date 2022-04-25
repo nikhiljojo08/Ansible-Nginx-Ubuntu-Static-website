@@ -1,2 +1,4 @@
-# Ansible-Nninx-Ubuntu-Static-website
-Using Ansible to configure NGINX on Ubuntu and host a static website
+# Ansible-Nginx-Ubuntu-Static-website
+I demonstrated how to install and configure NGINX with Ansible. Also, deployed a static website with the Ansible synchronize module.
+
+ansible-playbook -i hosts main.yml
