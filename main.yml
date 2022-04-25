@@ -1,0 +1,49 @@
+- hosts: all
+  become: yes
+  vars:
+    domain: nginx.nikhiljojonikhil.space
+    ansible_user: ubuntu
+    nginx_port: 8080
+  tasks:
+  - name: "apt-get update"
+    apt:
+      update_cache: yes
+
+  - name: "install nginx"
+    apt:
+      name: nginx
+      state: latest
+
+  - name: "create www directory"
+    file:
+      path: /var/www/{{ domain }}
+      state: directory
+      mode: '0775'
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+
+  - name: delete default nginx site
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+    notify: restart nginx
+
+  - name: copy nginx site.conf
+    template:
+      src: site.conf
+      dest: /etc/nginx/sites-enabled/{{ domain }}
+      owner: root
+      group: root
+      mode: '0644'
+    notify: restart nginx
+    
+  - name: "sync website"
+    copy:
+      src: site/
+      dest: /var/www/{{ domain }}
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
